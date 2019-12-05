@@ -18,4 +18,5 @@ jobs:
     
       - run: |
           docker build -f Dockerfile -t keaaa/http-echo:${{ github.sha }} .
+          docker tag keaaa/http-echo:latest keaaa/http-echo:${{ github.sha }}
           docker push keaaa/http-echo:${{ github.sha }}
