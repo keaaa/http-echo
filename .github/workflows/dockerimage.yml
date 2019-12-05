@@ -16,5 +16,5 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
     
     - run: |
-        docker build . -t keaaa/http-echo:${{ github.sha }}
+        docker build  -t keaaa/http-echo:${{ github.sha }} .
         docker push keaaa/http-echo:${{ github.sha }}
