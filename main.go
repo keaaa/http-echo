@@ -9,17 +9,15 @@ import (
 )
 
 func homeLink(w http.ResponseWriter, r *http.Request) {
+	fmt.Fprintf(w, "Method %q, Request %q\n", r.Method, r.RequestURI)
+
 	for k, v := range r.Header {
-		log.Printf("Header field %q, Value %q\n", k, v)
 		fmt.Fprintf(w, "Header field %q, Value %q\n", k, v)
 	}
 }
 
 func main() {
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/", homeLink)
-	router.HandleFunc("/api", homeLink)
-	router.HandleFunc("/api/v1/applications", homeLink)
-	router.HandleFunc("/v1/applications", homeLink)
-	log.Fatal(http.ListenAndServe(":8100", router))
+	router.PathPrefix("/").HandlerFunc(homeLink)
+	log.Fatal(http.ListenAndServe(":8080", router))
 }
