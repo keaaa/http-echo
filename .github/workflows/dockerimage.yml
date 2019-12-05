@@ -9,12 +9,13 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - uses: azure/docker-login@v1
-      with:
-        login-server: https://index.docker.io/v1/
-        username: ${{ secrets.REGISTRY_USERNAME }}
-        password: ${{ secrets.REGISTRY_PASSWORD }}
+      - uses: actions/checkout@v1
+      - uses: azure/docker-login@v1
+        with:
+          login-server: https://index.docker.io/v1/
+          username: ${{ secrets.REGISTRY_USERNAME }}
+          password: ${{ secrets.REGISTRY_PASSWORD }}
     
-    - run: |
-        docker build -f Dockerfile -t keaaa/http-echo:${{ github.sha }} .
-        docker push keaaa/http-echo:${{ github.sha }}
+      - run: |
+          docker build -f Dockerfile -t keaaa/http-echo:${{ github.sha }} .
+          docker push keaaa/http-echo:${{ github.sha }}
