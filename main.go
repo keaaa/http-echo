@@ -19,7 +19,7 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "\n")
 	fmt.Fprintf(w, "Request Headers\n")
 	for k, v := range r.Header {
-		fmt.Fprintf(w, "Header field %q, Value %q\n", k, v)
+		fmt.Fprintf(w, "%q: %q\n", k, v)
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
