@@ -6,7 +6,10 @@ import (
 	"log"
 	"net/http"
 	"os"
-
+	"context"
+	"os/signal"
+	"syscall"
+	"time"
 	"github.com/gorilla/mux"
 )
 
@@ -34,10 +37,39 @@ func main() {
 	router := mux.NewRouter().StrictSlash(true)
 	router.PathPrefix("/").HandlerFunc(defaultHandler)
 	port := os.Getenv("PORT")
+
 	if port == "" {
 		port = "8080"
 	}
 
-	log.Printf("http-echo listening on port %s", port)
-	log.Fatal(http.ListenAndServe(fmt.Sprintf(":%s", port), router))
+	// for graceful shutdown of service.
+	done := make(chan os.Signal, 1)
+	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
+
+
+	// Created a new server instance
+	log.Printf("[http-echo] listening on port %s", port)
+	server := &http.Server{Addr: fmt.Sprintf(":%s", port), Handler: router}
+
+	go func() {
+		if err := server.ListenAndServe(); err != nil {
+			log.Println("[http-echo]", "failed,", err)
+		}
+	}()
+
+	<-done
+
+	log.Println("[Grcefull shutdown]")
+	// Gracefull Shutdown added.
+	ctx, cancel := context.WithTimeout(context.Background(), 5*time.Second)
+	defer func() {
+		// extra handling here
+		cancel()
+	}()
+
+	if err := server.Shutdown(ctx); err != nil {
+		log.Fatalf("Server Shutdown Failed:%+v", err)
+	}
+
+	
 }
