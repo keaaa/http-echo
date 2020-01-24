@@ -3,14 +3,16 @@ package main
 import (
 	"context"
 	"fmt"
-	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
 	"os/signal"
+	"sort"
 	"syscall"
 	"time"
+
+	"github.com/gorilla/mux"
 )
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
@@ -22,8 +24,14 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 
 	fmt.Fprintf(w, "\n")
 	fmt.Fprintf(w, "Request Headers\n")
-	for k, v := range r.Header {
-		fmt.Fprintf(w, "%q: %q\n", k, v)
+	headers := make([]string, 0, len(r.Header))
+	for k := range r.Header {
+		headers = append(headers, k)
+	}
+	sort.Strings(headers)
+
+	for _, k := range headers {
+		fmt.Fprintf(w, "%q: %q\n", k, r.Header[k])
 	}
 
 	body, err := ioutil.ReadAll(r.Body)

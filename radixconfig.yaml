@@ -16,6 +16,8 @@ spec:
          port: 8080
       environmentConfig:
         - environment: dev
+          variables:
+            GODEBUG: http2debug=1
           resources:
             requests:
               memory: "54Mi"
