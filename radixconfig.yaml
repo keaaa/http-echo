@@ -1,0 +1,27 @@
+apiVersion: radix.equinor.com/v1
+kind: RadixApplication
+metadata:
+  name: http-echo
+spec:
+  environments:
+    - name: dev
+      build:
+        from: master
+  components:
+    - name: echo
+      src: .
+      publicPort: http
+      ports:
+       - name: http
+         port: 8080
+      environmentConfig:
+        - environment: dev
+          resources:
+            requests:
+              memory: "54Mi"
+              cpu: "10m"
+            limits:
+              memory: "54Mi"
+          horizontalScaling:
+            minReplicas: 1
+            maxReplicas: 4

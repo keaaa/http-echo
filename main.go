@@ -1,22 +1,23 @@
 package main
 
 import (
+	"context"
 	"fmt"
+	"github.com/gorilla/mux"
 	"io/ioutil"
 	"log"
 	"net/http"
 	"os"
-	"context"
 	"os/signal"
 	"syscall"
 	"time"
-	"github.com/gorilla/mux"
 )
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "General\n")
 	fmt.Fprintf(w, "Request URL: %q\n", r.RequestURI)
 	fmt.Fprintf(w, "Request Method: %q\n", r.Method)
+	fmt.Fprintf(w, "Request http protocol: %q\n", r.Proto)
 	fmt.Fprintf(w, "Remote Address: %q\n", r.RemoteAddr)
 
 	fmt.Fprintf(w, "\n")
@@ -46,7 +47,6 @@ func main() {
 	done := make(chan os.Signal, 1)
 	signal.Notify(done, os.Interrupt, syscall.SIGINT, syscall.SIGTERM)
 
-
 	// Created a new server instance
 	log.Printf("[http-echo] listening on port %s", port)
 	server := &http.Server{Addr: fmt.Sprintf(":%s", port), Handler: router}
@@ -71,5 +71,4 @@ func main() {
 		log.Fatalf("Server Shutdown Failed:%+v", err)
 	}
 
-	
 }
