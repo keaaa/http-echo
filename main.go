@@ -66,19 +66,6 @@ func addRequestedInformation(w http.ResponseWriter, r *http.Request) {
 	if err == nil && len(body) > 0 {
 		fmt.Fprintf(w, "%s", string(body))
 	}
-
-	fmt.Fprintf(w, "\n")
-	fmt.Fprintf(w, "Response headers\n")
-	responseHeaders := w.Header()
-	headers = make([]string, 0, len(responseHeaders))
-	for k := range responseHeaders {
-		headers = append(headers, k)
-	}
-	sort.Strings(headers)
-
-	for _, k := range headers {
-		fmt.Fprintf(w, "%q: %q\n", k, responseHeaders[k])
-	}
 }
 
 func main() {
