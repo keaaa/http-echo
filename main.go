@@ -9,6 +9,7 @@ import (
 	"os"
 	"os/signal"
 	"sort"
+	"strings"
 	"syscall"
 	"time"
 
@@ -16,6 +17,28 @@ import (
 )
 
 func defaultHandler(w http.ResponseWriter, r *http.Request) {
+	addRequestedInformation(w, r)
+
+	includeHostInfo := os.Getenv("INCLUDE_HOST_INFORMATION")
+	if includeHostInfo == "true" || includeHostInfo == "1" {
+		addHostingInformation(w, r)
+	}
+}
+
+func addHostingInformation(w http.ResponseWriter, r *http.Request) {
+	hostName, _ := os.Hostname()
+	fmt.Fprintf(w, "\n")
+	fmt.Fprintf(w, "Hostname: %q\n", hostName)
+	fmt.Fprintf(w, "\n")
+	fmt.Fprintf(w, "Environment variable\n")
+	envVar := os.Environ()
+	for _, v := range envVar {
+		keyVal := strings.Split(v, "=")
+		fmt.Fprintf(w, "%q: %q\n", keyVal[0], keyVal[1])
+	}
+}
+
+func addRequestedInformation(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "General\n")
 	fmt.Fprintf(w, "Request URL: %q\n", r.RequestURI)
 	fmt.Fprintf(w, "Request Method: %q\n", r.Method)
