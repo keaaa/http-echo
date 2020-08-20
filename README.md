@@ -22,3 +22,5 @@ Header field "User-Agent", Value ["curl/7.64.1"]
 Body
 arg=val&arg2=val2
 ```
+
+Can also return host information by setting environment variable INCLUDE_HOST_INFORMATION
