@@ -19,8 +19,11 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	fmt.Fprintf(w, "General\n")
 	fmt.Fprintf(w, "Request URL: %q\n", r.RequestURI)
 	fmt.Fprintf(w, "Request Method: %q\n", r.Method)
-	fmt.Fprintf(w, "Request http protocol: %q\n", r.Proto)
+	fmt.Fprintf(w, "Request HTTP protocol: %q\n", r.Proto)
 	fmt.Fprintf(w, "Remote Address: %q\n", r.RemoteAddr)
+	fmt.Fprintf(w, "Request Host: %q\n", r.Host)
+	fmt.Fprintf(w, "Request content length: %v\n", r.ContentLength)
+	fmt.Fprintf(w, "Request TransferEncoding: %q\n", r.TransferEncoding)
 
 	fmt.Fprintf(w, "\n")
 	fmt.Fprintf(w, "Request Headers\n")
@@ -35,10 +38,23 @@ func defaultHandler(w http.ResponseWriter, r *http.Request) {
 	}
 
 	body, err := ioutil.ReadAll(r.Body)
+	fmt.Fprintf(w, "\n")
+	fmt.Fprintf(w, "Body\n")
 	if err == nil && len(body) > 0 {
-		fmt.Fprintf(w, "\n")
-		fmt.Fprintf(w, "Body\n")
 		fmt.Fprintf(w, "%s", string(body))
+	}
+
+	fmt.Fprintf(w, "\n")
+	fmt.Fprintf(w, "Response headers\n")
+	responseHeaders := w.Header()
+	headers = make([]string, 0, len(responseHeaders))
+	for k := range responseHeaders {
+		headers = append(headers, k)
+	}
+	sort.Strings(headers)
+
+	for _, k := range headers {
+		fmt.Fprintf(w, "%q: %q\n", k, responseHeaders[k])
 	}
 }
 
